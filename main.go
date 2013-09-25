@@ -19,8 +19,6 @@ type Command struct {
 	Params []string
 }
 
-const reconnectInterval = 10 * time.Second
-
 var (
 	server         = flag.String("irc.server", "localhost:6667", "IRC server to connect to, host:port")
 	useSSL         = flag.Bool("irc.ssl", false, "Use SSL")
@@ -29,6 +27,7 @@ var (
 	realname       = flag.String("irc.realname", "IRC Bridge", "IRC realname")
 	udpPort        = flag.Uint("udp.port", 41234, "JSON-UDP listen port")
 	debug          = flag.Bool("debug", false, "Print debug info")
+	reconnect      = flag.Duration("irc.reconnect", 60*time.Second, "Reconnect interval (delay)")
 )
 
 var clientLock sync.Mutex
@@ -45,7 +44,7 @@ func connectIRC(server string, useSSL bool, useInsecureSSL bool, nick string, re
 		clientLock.Lock()
 
 		for {
-			time.Sleep(reconnectInterval)
+			time.Sleep(*reconnect)
 
 			log.Println("notice: reconnecting")
 			err := conn.Connect(server)
