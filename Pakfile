@@ -1,0 +1,4 @@
+packages:
+- name: github.com/calmh/goirc
+  pakname: pak
+  targetbranch: origin/fork
